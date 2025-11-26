@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import AdBanner from "@/components/adbanner";
 
 const DAAD_REGEX =
   /^https:\/\/www2\.daad\.de\/deutschland\/studienangebote\/international-programmes\/en\/detail\/(\d+)\/?(#.*)?$/;
@@ -70,6 +71,13 @@ export default function HomePage() {
           <p>Signed in as {user.email}</p>
         </div>
       )}
+      <div className="bg-background mb-5">
+        <AdBanner
+          dataAdFormat="auto"
+          dataFullWidthResponsive={true}
+          dataAdSlot="4536181767258856"
+        />
+      </div>
       <Card className="w-full max-w-2xl shadow-xl border-0">
         <CardContent className="p-8 space-y-6">
           <div className="space-y-2">
