@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
+import Script from "next/script";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -19,7 +20,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${montserrat.variable} antialiased`}>{children}</body>
+      <head>
+        {/* Google AdSense Verification Script */}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4536181767258856"
+          strategy="afterInteractive"
+          crossOrigin="anonymous"
+        />
+      </head>
+      <body className={`${montserrat.variable} antialiased montserrat`}>
+        {children}
+      </body>
     </html>
   );
 }
