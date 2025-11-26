@@ -22,7 +22,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <AdSense pId="2737076335315038" />
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2737076335315038"
+          crossOrigin="anonymous"
+        />
         <meta name="google-adsense-account" content="ca-pub-2737076335315038" />
       </head>
       <body className={`${montserrat.variable} antialiased montserrat`}>
