@@ -71,11 +71,11 @@ export default function HomePage() {
           <p>Signed in as {user.email}</p>
         </div>
       )}
-      <div className="bg-background mb-5">
+      <div className="bg-background mb-5 w-full">
         <AdBanner
           dataAdFormat="auto"
           dataFullWidthResponsive={true}
-          dataAdSlot="4536181767258856"
+          dataAdSlot="2737076335315038"
         />
       </div>
       <Card className="w-full max-w-2xl shadow-xl border-0">

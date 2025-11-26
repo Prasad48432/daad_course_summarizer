@@ -22,11 +22,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <AdSense pId="4536181767258856" />
-        <meta
-          name="google-adsense-account"
-          content="ca-pub-4536181767258856"
-        ></meta>
+        <AdSense pId="2737076335315038" />
+        <meta name="google-adsense-account" content="ca-pub-2737076335315038" />
       </head>
       <body className={`${montserrat.variable} antialiased montserrat`}>
         {children}
