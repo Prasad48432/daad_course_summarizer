@@ -29,10 +29,8 @@ export default function HomePage({ user }: { user: User | null }) {
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(true);
-  const [result, setResult] = useState<string | null>(
-    `**Course Summary**\n- Course: Master of Science in Automotive Software Engineering\n- University: Chemnitz University of Technology, Chemnitz, Germany\n- Duration: 4 semesters (2 years)\n- Language of instruction: English (100%)\n- Tuition fees: None; semester contribution approx. 330 EUR (includes public transport)\n- Application deadlines: 15 July (winter semester), 15 January (summer semester)\n- Admission requirements: Bachelor’s degree in Computer Science or related fields\n- English language requirements: IELTS 5.5, TOEFL iBT 72, or equivalent\n- Integrated research internship and options for specialisation\n- Funding opportunities and support services available for international students\n\n**Cleaned Description**\nThe Master’s in Automotive Software Engineering at Chemnitz University of Technology is a research-oriented programme focused on the development of complex automotive software systems. The curriculum covers key areas such as automotive software technology, embedded systems, real-time and communication systems, and computer science. Students can specialise in topics like automotive software platforms or software verification.\n\nThe programme includes a mandatory research internship, which can be completed at the university or in industry. Courses are taught entirely in English, and students are required to reach at least A2 level in German by the end of the third semester. The university offers support with internships, part-time jobs, accommodation, and career planning. No tuition fees are charged, but students must pay a semester contribution that covers public transport. Funding options are available for international students.`
-  );
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [result, setResult] = useState<string | null>(null);
 
   const supabase = useMemo(() => createClient(), []);
 
