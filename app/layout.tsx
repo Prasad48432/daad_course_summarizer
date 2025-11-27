@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
+import { Montserrat, Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
-import Script from "next/script";
-import AdSense from "@/components/adsense";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
+});
+
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
+  subsets: ["latin"],
+  weight: ["200", "300", "400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -29,7 +33,9 @@ export default function RootLayout({
         />
         <meta name="google-adsense-account" content="ca-pub-2737076335315038" />
       </head>
-      <body className={`${montserrat.variable} antialiased montserrat`}>
+      <body
+        className={`${montserrat.variable} ${bricolage.variable} antialiased montserrat`}
+      >
         {children}
       </body>
     </html>

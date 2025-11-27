@@ -73,9 +73,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    console.log("url provided is ", url);
-
-    // -------- Call Vectorshift Pipeline ----------
     const vsResp = await fetch(
       "https://api.vectorshift.ai/v1/pipeline/6927147ad3b0f7d99b2cf9b0/run",
       {
@@ -91,10 +88,6 @@ export async function POST(req: NextRequest) {
         }),
       }
     );
-
-    console.log("Vectorshift response status: ", vsResp.status);
-    console.log("Vectorshift response headers: ", vsResp.headers);
-    console.log("Vectorshift response body: ", await vsResp.clone().text());
 
     if (!vsResp.ok) {
       const t = await vsResp.text();
