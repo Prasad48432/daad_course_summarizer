@@ -131,8 +131,14 @@ export default function HomePage({ user }: { user: User | null }) {
             </DialogDescription>
           </DialogHeader>
           <div className="max-h-[60vh] overflow-y-auto pr-2 mt-4 custom-scrollbar">
-            <SummaryRenderer data={result} />
-            {result}
+            {result && (
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeRaw]}
+              >
+                {result}
+              </ReactMarkdown>
+            )}
           </div>
           <DialogFooter>
             <DialogClose asChild>
