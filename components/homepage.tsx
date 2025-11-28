@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { createClient } from "@/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,11 +16,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Copy, Sparkle, Sparkles, X } from "lucide-react";
+import { Copy, Sparkles, University, X } from "lucide-react";
 import Image from "next/image";
 import Loader from "@/components/loader";
 import UserNav from "@/components/user-nav";
 import { User } from "@supabase/supabase-js";
+import Link from "next/link";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
+import SummaryRenderer from "./summary-renderer";
 
 const DAAD_REGEX =
   /^https:\/\/www2\.daad\.de\/deutschland\/studienangebote\/international-programmes\/en\/detail\/(\d+)\/?(#.*)?$/;
@@ -107,6 +111,7 @@ export default function HomePage({ user }: { user: User | null }) {
           </Button>
         )}
       </div>
+
       {process.env.NODE_ENV === "production" && (
         <div className="bg-background w-full max-w-7xl h-24">
           <AdBanner
@@ -126,9 +131,8 @@ export default function HomePage({ user }: { user: User | null }) {
             </DialogDescription>
           </DialogHeader>
           <div className="max-h-[60vh] overflow-y-auto pr-2 mt-4 custom-scrollbar">
-            <div className="prose dark:prose-invert max-w-none">
-              <ReactMarkdown>{result}</ReactMarkdown>
-            </div>
+            <SummaryRenderer data={result} />
+            {result}
           </div>
           <DialogFooter>
             <DialogClose asChild>
@@ -180,7 +184,7 @@ export default function HomePage({ user }: { user: User | null }) {
                 <Label htmlFor="daad">DAAD course link</Label>
                 <Input
                   id="daad"
-                  placeholder="https://www2.daad.de/deutschland/studienangebote/international-programmes/en/detail/8357/#tab_overview"
+                  placeholder="Enter your daad course link here"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   inputMode="url"
@@ -220,6 +224,126 @@ export default function HomePage({ user }: { user: User | null }) {
           )}
         </CardContent>
       </Card>
+
+      <div className="flex items-center justify-between w-full max-w-2xl px-2">
+        <p>Other Tools</p>
+        <div className="flex items-center gap-2">
+          <Button size={"sm"} className="rounded-full cursor-pointer">
+            <Link href={"/admit-evaluator"} className="flex items-center gap-2">
+              Admit Evaluator <University />
+            </Link>
+          </Button>
+        </div>
+      </div>
+
+      <div className="w-full max-w-2xl space-y-4 text-[15px] leading-relaxed mt-6">
+        <h1 className="text-2xl font-bold">
+          DAAD Course Summariser – Free AI Tool for Students Applying to Germany
+        </h1>
+
+        <p>
+          The DAAD Course Summariser is a free tool designed to help
+          international students quickly understand German university programmes
+          listed on the official DAAD (German Academic Exchange Service)
+          website. While DAAD provides extremely valuable information, the
+          course pages are often long, data-heavy, and difficult to read on
+          mobile devices. This tool solves that problem by transforming any DAAD
+          course link into a clear, short and student-friendly summary within
+          seconds.
+        </p>
+
+        <h2 className="text-xl font-semibold mt-4">What This Tool Does</h2>
+        <p>
+          With one click, the summariser extracts key academic details such as
+          admission requirements, deadlines, teaching language, programme
+          duration, fees, and eligibility criteria. Instead of scrolling through
+          long descriptions, students receive a clean, organised summary they
+          can easily understand. It is especially useful for applicants
+          exploring multiple German universities or comparing course options
+          before preparing their applications.
+        </p>
+
+        <h2 className="text-xl font-semibold mt-4">Why This Tool Is Helpful</h2>
+        <p>
+          Every year thousands of students apply to German universities, but
+          many struggle to interpret DAAD course pages because they contain
+          technical language, long paragraphs, or incomplete formatting. This
+          summariser simplifies that information into concise points, making it
+          easier to decide whether a course matches your academic background,
+          skills, and goals.
+        </p>
+
+        <ul className="list-disc list-inside space-y-1">
+          <li>Faster understanding of programme structure</li>
+          <li>Clear admission requirements and English test scores</li>
+          <li>Tuition fees and semester contribution breakdown</li>
+          <li>Exact application deadlines for EU & non-EU students</li>
+          <li>Teaching language and university details</li>
+          <li>Ideal applicant profile based on course description</li>
+        </ul>
+
+        <h2 className="text-xl font-semibold mt-4">
+          Who Can Use the DAAD Course Summariser?
+        </h2>
+        <p>
+          This tool is designed for bachelor’s students, working professionals,
+          or graduates planning to pursue a master’s degree in Germany. It is
+          especially helpful for students from India, Pakistan, Bangladesh,
+          Nigeria, Brazil and other countries where DAAD is commonly used to
+          research German universities.
+        </p>
+
+        <p>
+          Whether you are applying to technical universities, universities of
+          applied sciences, or research institutes, this tool provides the
+          clarity needed to shortlist the right programmes.
+        </p>
+
+        <h2 className="text-xl font-semibold mt-4">How to Use the Tool</h2>
+        <ol className="list-decimal list-inside space-y-1">
+          <li>Go to the official DAAD website and open any programme page.</li>
+          <li>
+            Copy the full URL of the course (e.g.,
+            https://www2.daad.de/…/detail/12345/).
+          </li>
+          <li>Paste it into the input box on this page.</li>
+          <li>Click to generate your summary.</li>
+        </ol>
+
+        <p>
+          Within seconds, your personalised summary appears, highlighting the
+          most important parts of the course. You can also copy the results for
+          later use.
+        </p>
+
+        <h2 className="text-xl font-semibold mt-4">
+          Why This Site Is Safe and Trustworthy
+        </h2>
+        <p>
+          This website uses secure API calls, does not store your DAAD links
+          permanently, and only fetches publicly available course information.
+          Your data is not shared with any third party. The summaries are
+          generated through a structured process designed to ensure accuracy and
+          avoid misinformation.
+        </p>
+
+        <h2 className="text-xl font-semibold mt-4">Future Features</h2>
+        <p>
+          We are also working on new tools for students applying to Germany,
+          including:
+        </p>
+        <ul className="list-disc list-inside space-y-1">
+          <li>Admission chances evaluator</li>
+          <li>University finder by profile</li>
+          <li>IELTS/GRE requirement checker</li>
+          <li>Visa document assistant</li>
+        </ul>
+
+        <p>
+          These improvements aim to make the German university application
+          process simpler and more transparent for international students.
+        </p>
+      </div>
 
       {process.env.NODE_ENV === "production" && (
         <div className="bg-background w-full max-w-7xl h-24">
