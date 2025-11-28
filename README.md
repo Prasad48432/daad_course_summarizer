@@ -52,14 +52,6 @@ This project is built with **Next.js 14**, **Supabase Auth**, **Supabase RLS**, 
 | Icons | lucide-react |
 | AI Pipeline | Vectorshift API |
 | Deployment | Vercel |
-| Ads (Optional) | Google AdSense |
 | Markdown | ReactMarkdown + remark-gfm |
 
 ---
-
-## 🧰 Installation & Setup
-
-### 1️⃣ Clone Repository
-```bash
-git clone https://github.com/<your-username>/daad-course-summariser.git
-cd daad-course-summariser
