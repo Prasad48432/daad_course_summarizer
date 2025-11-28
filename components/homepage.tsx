@@ -2,7 +2,14 @@
 import { useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { createClient } from "@/supabase/client";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,16 +36,29 @@ import SummaryRenderer from "./summary-renderer";
 const DAAD_REGEX =
   /^https:\/\/www2\.daad\.de\/deutschland\/studienangebote\/international-programmes\/en\/detail\/(\d+)\/?(#.*)?$/;
 
-export default function HomePage({ user }: { user: User | null }) {
+export default function HomePage({
+  user,
+  summaries,
+}: {
+  user: User | null;
+  summaries?: Summary[] | null;
+}) {
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [result, setResult] = useState<string | null>(null);
+  const [summariesState, setSummariesState] = useState<Summary[] | null>(
+    summaries ?? null
+  );
 
   const supabase = useMemo(() => createClient(), []);
 
   const isValid = useMemo(() => DAAD_REGEX.test(url.trim()), [url]);
+
+  function normalizeDaadUrl(raw: string) {
+    return raw.replace(/[#?].*$/, "").replace(/\/$/, "");
+  }
 
   const handleSummarize = async () => {
     setError(null);
@@ -53,6 +73,23 @@ export default function HomePage({ user }: { user: User | null }) {
       const session = await supabase.auth.getSession();
       const token = session.data.session?.access_token;
       if (!token) throw new Error("Not authenticated.");
+      const normalisedUrl = normalizeDaadUrl(url);
+
+      const { data: ExisitingSummaries, error: ExisitingSummariesError } =
+        await supabase.from("summaries").select("*").eq("url", normalisedUrl);
+
+      if (ExisitingSummaries && !ExisitingSummariesError) {
+        const firstSummary = ExisitingSummaries[0];
+        const parsed =
+          typeof firstSummary.summary === "string"
+            ? JSON.parse(firstSummary.summary)
+            : firstSummary.summary;
+        setResult(parsed.markdown);
+        setDialogOpen(true);
+        setUrl("");
+        setLoading(false);
+        return;
+      }
 
       const r = await fetch("/api/summarize", {
         method: "POST",
@@ -65,6 +102,31 @@ export default function HomePage({ user }: { user: User | null }) {
 
       const j = await r.json();
       if (!r.ok) throw new Error(j.message || "Failed to summarize");
+
+      // j IS the JSON summary → save it in Supabase
+      if (user) {
+        const { data, error } = await supabase
+          .from("summaries")
+          .insert({
+            user_id: user.id,
+            url: normalisedUrl,
+            summary: JSON.stringify(j),
+          })
+          .select("*")
+          .single();
+
+        // update local state
+        if (data && !error) {
+          setSummariesState((prev) => {
+            if (prev) {
+              return [data, ...prev];
+            } else {
+              return [data];
+            }
+          });
+        }
+      }
+
       setResult(j.markdown);
       setDialogOpen(true);
       setUrl("");
@@ -241,6 +303,51 @@ export default function HomePage({ user }: { user: User | null }) {
           </Button>
         </div>
       </div>
+
+      {/* Add summaries here */}
+      {user && summariesState && summariesState.length > 0 && (
+        <div className="w-full max-w-2xl space-y-3 mt-6">
+          <h2 className="text-lg font-semibold">Your Saved Summaries</h2>
+
+          <div className="space-y-3">
+            {summariesState.map((s) => {
+              const parsed =
+                typeof s.summary === "string"
+                  ? JSON.parse(s.summary)
+                  : s.summary;
+              return (
+                <Card
+                  key={s.id}
+                  className="cursor-pointer hover:bg-accent transition gap-0"
+                  onClick={() => {
+                    setResult(parsed.markdown);
+                    setDialogOpen(true);
+                  }}
+                >
+                  <CardHeader>
+                    <CardTitle className="leading-5 text-primary">
+                      {s.url || "Untitled Course"}
+                    </CardTitle>
+                    <CardDescription className="line-clamp-3 text-sm text-muted-foreground">
+                      {parsed.markdown}
+                    </CardDescription>
+                  </CardHeader>
+
+                  <CardContent className="p-0"></CardContent>
+                  <CardFooter>
+                    <div className="text-xs mt-3 text-foreground font-semibold ml-auto">
+                      Saved on{" "}
+                      {s.created_at
+                        ? new Date(s.created_at).toLocaleDateString()
+                        : "Unknown"}
+                    </div>
+                  </CardFooter>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       <div className="w-full max-w-2xl space-y-4 text-[15px] leading-relaxed mt-6">
         <h1 className="text-2xl font-bold">

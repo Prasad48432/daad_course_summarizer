@@ -7,9 +7,21 @@ export default async function Home() {
     data: { user },
   } = await supabase.auth.getUser();
 
+  let summaries = null;
+
+  if (user) {
+    const { data, error } = await supabase
+      .from("summaries")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    summaries = data || [];
+  }
+
   return (
     <>
-      <HomePage user={user} />
+      <HomePage user={user} summaries={summaries} />
     </>
   );
 }
